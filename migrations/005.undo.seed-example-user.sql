@@ -1,0 +1,1 @@
+truncate users, courses, notes, essays restart identity cascade;

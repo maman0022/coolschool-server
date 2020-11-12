@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "predeploy": "npm audit",
-    "deploy": "git push heroku master"
+    "deploy": "git push heroku master",
+    "migrate": "postgrator --config postgrator-config.js"
   },
   "keywords": [],
   "author": "",
@@ -21,13 +22,16 @@
     "supertest": "^5.0.0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.12",
     "morgan": "^1.10.0",
     "pg": "^8.4.2",
-    "postgrator-cli": "^3.2.0"
+    "postgrator-cli": "^3.2.0",
+    "xss": "^1.0.8"
   }
 }
