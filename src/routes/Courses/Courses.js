@@ -27,11 +27,11 @@ function sanitizeNoteAndEssay(resource) {
 Courses
   .route('/')
   .get((req, res, next) => {
-    const { id } = req.user
-    if (!id) {
+    const user_id = req.user.id
+    if (!user_id) {
       return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
     }
-    DatabaseService.getCourses(req.app.get('db'), id)
+    DatabaseService.getCourses(req.app.get('db'), user_id)
       .then(courses => {
         const sanitizedCourses = courses.map(sanitizeCourse)
         res.status(200).json(sanitizedCourses)
@@ -39,46 +39,50 @@ Courses
       .catch(next)
   })
   .post((req, res, next) => {
-    const { id } = req.user
-    if (!id) {
+    const user_id = req.user.id
+    if (!user_id) {
       return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
     }
     const { title } = req.body
     if (!title) {
       return res.status(400).json({ message: 'Title is required' })
     }
-    DatabaseService.addCourse(req.app.get('db'), id, title)
+    DatabaseService.addCourse(req.app.get('db'), user_id, title)
       .then(course => {
         res.status(201).json(sanitizeCourse(course))
       })
       .catch(next)
   })
-  .delete((req,res,next)=>{
-    const { id } = req.user
-    if (!id) {
-      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
-    }
-    const course_id  = req.body.id
-    if (!course_id) {
-      return res.status(400).json({ message: 'Course ID is required' })
-    }
-    DatabaseService.deleteCourse(req.app.get('db'), id, course_id)
-      .then(() => {
-        res.status(204).end()
-      })
-      .catch(next)
-  })
+
 
 Courses
   .route('/:id')
   .get((req, res, next) => {
     const user_id = req.user.id
+    if (!user_id) {
+      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
+    }
     const course_id = req.params.id
     DatabaseService.getCourse(req.app.get('db'), user_id, course_id)
       .then(([notes, essays]) => {
         const sanitizedNotes = notes.map(sanitizeNoteAndEssay)
         const sanitizedEssays = essays.map(sanitizeNoteAndEssay)
         res.status(200).json({ notes: sanitizedNotes, essays: sanitizedEssays })
+      })
+      .catch(next)
+  })
+  .delete((req, res, next) => {
+    const user_id = req.user.id
+    if (!user_id) {
+      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
+    }
+    const course_id = req.params.id
+    if (!course_id) {
+      return res.status(400).json({ message: 'Course ID is required' })
+    }
+    DatabaseService.deleteCourse(req.app.get('db'), user_id, course_id)
+      .then(() => {
+        res.status(204).end()
       })
       .catch(next)
   })

@@ -25,5 +25,26 @@ module.exports = {
   },
   getNote(db, user_id, id) {
     return db('notes').where({ user_id, id }).first()
+  },
+  addNote(db, noteData){
+    return db('notes').insert(noteData).returning('*').then(rows => rows[0])
+  },
+  deleteNote(db, user_id, id){
+    return db('notes').where({ user_id, id }).del()
+  },
+  updateNote(db, user_id, id, noteData){
+    return db('notes').where({ user_id, id }).update(noteData).returning('*').then(rows => rows[0])
+  },
+  getEssay(db, user_id, id) {
+    return db('essays').where({ user_id, id }).first()
+  },
+  addEssay(db, essayData){
+    return db('essays').insert(essayData).returning('*').then(rows => rows[0])
+  },
+  deleteEssay(db, user_id, id){
+    return db('essays').where({ user_id, id }).del()
+  },
+  updateEssay(db, user_id, id, essayData){
+    return db('essays').where({ user_id, id }).update(essayData).returning('*').then(rows => rows[0])
   }
 }

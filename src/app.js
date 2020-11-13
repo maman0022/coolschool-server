@@ -9,6 +9,7 @@ const RegisterUser = require('./routes/RegisterUser/RegisterUser')
 const LoginUser = require('./routes/LoginUser/LoginUser')
 const Courses = require('./routes/Courses/Courses')
 const Notes = require('./routes/Notes')
+const Essays = require('./routes/Essays')
 
 const app = express()
 const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common'
@@ -21,6 +22,7 @@ app.use('/api/register', RegisterUser)
 app.use('/api/login', LoginUser)
 app.use('/api/courses', AuthService.authenticateUser, Courses)
 app.use('/api/notes', AuthService.authenticateUser, Notes)
+app.use('/api/essays', AuthService.authenticateUser, Essays)
 app.use(function errorHandler(error, req, res, next) {
   let response
   if (NODE_ENV === 'production') {
