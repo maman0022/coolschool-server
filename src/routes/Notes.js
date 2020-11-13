@@ -50,5 +50,39 @@ Notes
       })
       .catch(next)
   })
+  .delete((req, res, next) => {
+    const user_id = req.user.id
+    if (!user_id) {
+      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
+    }
+    const note_id = req.params.id
+    if (!note_id) {
+      return res.status(400).json({ message: 'Note ID is required' })
+    }
+    DatabaseService.deleteNote(req.app.get('db'), user_id, note_id)
+      .then(() => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+  .patch((req, res, next) => {
+    const user_id = req.user.id
+    if (!user_id) {
+      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
+    }
+    const note_id = req.params.id
+    if (!note_id) {
+      return res.status(400).json({ message: 'Note ID is required' })
+    }
+    const noteData = {
+      title: req.body.title,
+      content: req.body.content
+    }
+    DatabaseService.updateNote(req.app.get('db'), user_id, note_id, noteData)
+      .then(note => {
+        res.status(200).json(sanitizeNote(note))
+      })
+      .catch(next)
+  })
 
 module.exports = Notes
