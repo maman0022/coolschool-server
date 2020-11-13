@@ -22,5 +22,8 @@ module.exports = {
   },
   deleteCourse(db, user_id, id) {
     return db('courses').where({ user_id, id }).del()
+  },
+  getNote(db, user_id, id) {
+    return db('notes').where({ user_id, id }).first()
   }
 }
