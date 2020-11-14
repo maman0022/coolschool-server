@@ -2,17 +2,15 @@ const express = require('express')
 const bcrypt = require('bcryptjs')
 const xss = require('xss')
 const jwt = require('jsonwebtoken')
-const { JWT_SECRET } = require('../../config')
-const DatabaseService = require('../../services/DatabaseService')
+const { JWT_SECRET } = require('../config')
+const DatabaseService = require('../services/DatabaseService')
 
 const LoginUser = express.Router()
 
 function sanitizeUser(user) {
   return {
     id: user.id,
-    first_name: xss(user.first_name),
-    last_name: xss(user.last_name),
-    email: xss(user.email),
+    first_name: xss(user.first_name)
   }
 }
 

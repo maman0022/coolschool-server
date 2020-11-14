@@ -17,17 +17,24 @@ function sanitizeNote(note) {
 
 Notes
   .route('/')
-  .post((req, res, next) => {
-    const user_id = req.user.id
-    if (!user_id) {
-      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
+  .all((req, res, next) => {
+    if (!req.user.id) {
+      return res.status(401).json({ message: 'Unable to determine user. Please logout and log back in.' })
     }
-    const { title, content, courseId: course_id } = req.body
+    next()
+  })
+  .post((req, res, next) => {
+    const requiredFields = { 'Title': 'title', 'Content': 'content', 'Course ID': 'courseId' }
+    for (const field in requiredFields) {
+      if (!req.body[requiredFields[field]]) {
+        return res.status(400).json({ message: `${field} is required` })
+      }
+    }
     const noteData = {
-      title,
-      content,
-      user_id,
-      course_id
+      title: req.body.title,
+      content: req.body.content,
+      course_id: req.body.courseId,
+      user_id: req.user.id
     }
     DatabaseService.addNote(req.app.get('db'), noteData)
       .then(note => {
@@ -38,47 +45,48 @@ Notes
 
 Notes
   .route('/:id')
-  .get((req, res, next) => {
-    const user_id = req.user.id
-    if (!user_id) {
-      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
+  .all((req, res, next) => {
+    if (!req.user.id) {
+      return res.status(401).json({ message: 'Unable to determine user. Please logout and log back in.' })
     }
-    const id = req.params.id
-    DatabaseService.getNote(req.app.get('db'), user_id, id)
+    if (!req.params.id) {
+      return res.status(400).json({ message: 'Note ID is required' })
+    }
+    next()
+  })
+  .get((req, res, next) => {
+    const course_id = req.query.course
+    if (!course_id) {
+      return res.status(400).json({ message: 'Course ID is required' })
+    }
+    DatabaseService.getNote(req.app.get('db'), req.user.id, course_id, req.params.id)
       .then(note => {
+        if (!note) {
+          return res.status(204).end()
+        }
         res.status(200).json(sanitizeNote(note))
       })
       .catch(next)
   })
   .delete((req, res, next) => {
-    const user_id = req.user.id
-    if (!user_id) {
-      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
-    }
-    const note_id = req.params.id
-    if (!note_id) {
-      return res.status(400).json({ message: 'Note ID is required' })
-    }
-    DatabaseService.deleteNote(req.app.get('db'), user_id, note_id)
+    DatabaseService.deleteNote(req.app.get('db'), req.user.id, req.params.id)
       .then(() => {
         res.status(204).end()
       })
       .catch(next)
   })
   .patch((req, res, next) => {
-    const user_id = req.user.id
-    if (!user_id) {
-      return res.status(400).json({ message: 'Unable to determine user. Please logout and log back in.' })
-    }
-    const note_id = req.params.id
-    if (!note_id) {
-      return res.status(400).json({ message: 'Note ID is required' })
+    const requiredFields = { 'Title': 'title', 'Content': 'content' }
+    for (const field in requiredFields) {
+      if (!req.body[requiredFields[field]]) {
+        return res.status(400).json({ message: `${field} is required` })
+      }
     }
     const noteData = {
       title: req.body.title,
       content: req.body.content
     }
-    DatabaseService.updateNote(req.app.get('db'), user_id, note_id, noteData)
+    DatabaseService.updateNote(req.app.get('db'), req.user.id, req.params.id, noteData)
       .then(note => {
         res.status(200).json(sanitizeNote(note))
       })

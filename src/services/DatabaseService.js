@@ -23,8 +23,8 @@ module.exports = {
   deleteCourse(db, user_id, id) {
     return db('courses').where({ user_id, id }).del()
   },
-  getNote(db, user_id, id) {
-    return db('notes').where({ user_id, id }).first()
+  getNote(db, user_id, course_id, id) {
+    return db('notes').where({ user_id, course_id, id }).first()
   },
   addNote(db, noteData){
     return db('notes').insert(noteData).returning('*').then(rows => rows[0])
@@ -35,8 +35,8 @@ module.exports = {
   updateNote(db, user_id, id, noteData){
     return db('notes').where({ user_id, id }).update(noteData).returning('*').then(rows => rows[0])
   },
-  getEssay(db, user_id, id) {
-    return db('essays').where({ user_id, id }).first()
+  getEssay(db, user_id, course_id, id) {
+    return db('essays').where({ user_id, course_id, id }).first()
   },
   addEssay(db, essayData){
     return db('essays').insert(essayData).returning('*').then(rows => rows[0])
