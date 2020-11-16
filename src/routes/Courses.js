@@ -9,7 +9,8 @@ function sanitizeCourse(course) {
     id: course.id,
     title: xss(course.title),
     date_created: course.date_created,
-    user_id: course.user_id
+    user_id: course.user_id,
+    color: xss(course.color)
   }
 }
 
@@ -75,6 +76,20 @@ Courses
   })
   .delete((req, res, next) => {
     DatabaseService.deleteCourse(req.app.get('db'), req.user.id, req.params.id)
+      .then(() => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+  .patch((req, res, next) => {
+    const { color } = req.body
+    if (!color) {
+      return res.status(400).json({ message: 'Color is required' })
+    }
+    const courseData = {
+      color
+    }
+    DatabaseService.updateCourse(req.app.get('db'), req.user.id, req.params.id, courseData)
       .then(() => {
         res.status(204).end()
       })
