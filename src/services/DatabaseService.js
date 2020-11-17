@@ -6,13 +6,13 @@ module.exports = {
     return db('users').where({ email }).first()
   },
   getCourses(db, user_id) {
-    return db('courses').where({ user_id })
+    return db('courses').where({ user_id }).orderBy('id')
   },
   getEssays(db, user_id, course_id) {
-    return db('essays').where({ user_id, course_id })
+    return db('essays').where({ user_id, course_id }).orderBy('id')
   },
   getNotes(db, user_id, course_id) {
-    return db('notes').where({ user_id, course_id })
+    return db('notes').where({ user_id, course_id }).orderBy('id')
   },
   getCourse(db, user_id, course_id) {
     return Promise.all([this.getNotes(db, user_id, course_id), this.getEssays(db, user_id, course_id)])
