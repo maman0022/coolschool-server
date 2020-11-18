@@ -9,7 +9,8 @@ More information about this app and how it works can be found here - https://git
 BASE URL: https://damp-falls-25632.herokuapp.com  
 ### Endpoints  
 
-`POST /api/login` 
+`POST /api/login`  
+  
 Authenticates user. *Requires a request body*    
 Key|Value
 ---
