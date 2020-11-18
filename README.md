@@ -15,6 +15,7 @@ Key|Value
 ---|---
 email|string, required
 password|string, required  
+  
 Returns a JSON Web Token  
   
 ---  
