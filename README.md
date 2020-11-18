@@ -15,11 +15,23 @@ Key|Value
 ---|---
 email|string, required
 password|string, required  
+Returns a JSON Web Token  
   
 ---  
   
 `POST /api/register`  
 Create a new user. *Requires a request body*  
+Key|Value
+---|---
+fname|string, required
+lname|string, required
+email|string, required
+password|string, required  
+  
+---  
+  
+`GET /api/courses`  
+Gets all 
 Key|Value
 ---|---
 fname|string, required
