@@ -10,10 +10,19 @@ BASE URL: https://damp-falls-25632.herokuapp.com
 ### Endpoints  
 
 `POST /api/login`  
-  
 Authenticates user. *Requires a request body*  
-
 Key|Value
 ---|---
-email|user's email
-password|user's password
+email|string, required
+password|string, required  
+  
+---  
+  
+`POST /api/register`  
+Create a new user. *Requires a request body*  
+Key|Value
+---|---
+fname|string, required
+lname|string, required
+email|string, required
+password|string, required  
