@@ -67,10 +67,11 @@ Courses
   })
   .get((req, res, next) => {
     DatabaseService.getCourse(req.app.get('db'), req.user.id, req.params.id)
-      .then(([notes, essays]) => {
+      .then(([notes, essays, course]) => {
         const sanitizedNotes = notes.map(sanitizeNoteAndEssay)
         const sanitizedEssays = essays.map(sanitizeNoteAndEssay)
-        res.status(200).json({ notes: sanitizedNotes, essays: sanitizedEssays })
+        const sanitizedCourse = sanitizeCourse(course)
+        res.status(200).json({ notes: sanitizedNotes, essays: sanitizedEssays, course: sanitizedCourse })
       })
       .catch(next)
   })

@@ -15,7 +15,8 @@ module.exports = {
     return db('notes').where({ user_id, course_id }).orderBy('id')
   },
   getCourse(db, user_id, course_id) {
-    return Promise.all([this.getNotes(db, user_id, course_id), this.getEssays(db, user_id, course_id)])
+    const course = db('courses').where({ id: course_id, user_id }).first()
+    return Promise.all([this.getNotes(db, user_id, course_id), this.getEssays(db, user_id, course_id), course])
   },
   addCourse(db, user_id, title) {
     return db('courses').insert({ title, user_id }).returning('*').then(rows => rows[0])
