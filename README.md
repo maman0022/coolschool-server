@@ -71,3 +71,14 @@ Returns a 204 if succesful.
   
 ---  
   
+`POST /api/(notes | essays)`  
+Create a new note or essay depending on which endpoint is used and adds it to user's course. *Requires a request body*  
+Key|Value
+---|---
+title|string, required  
+content|string, required  
+courseId|integer, required
+  
+Returns an object containing an id, title, date created, user id, course id, and content.
+
+---  
