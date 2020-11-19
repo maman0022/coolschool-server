@@ -4,6 +4,9 @@ Live Link: https://coolschool.vercel.app/
 ## Summary  
 This is the server side of my full-stack app. The main purpose of this back-end is to register and authenticate users. As well as, to retrieve user content which is hosted in a PostGreSQL database from the same host (Heroku).   
 More information about this app and how it works can be found here - https://github.com/maman0022/coolschool-client.  
+  
+## Tech Stack  
+This is a Node.js back-end using the express.js server framework. Knex is used to interact with the database and postgrator is used for migrations. Helmet is used to provide header security and user passwords are hashed using bcrypt. The JSONWebToken library is used to generate the authentication tokens.  
 
 ## API Documentation  
 BASE URL: https://damp-falls-25632.herokuapp.com  
