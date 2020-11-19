@@ -48,10 +48,26 @@ Returns a course object which contains an id, title, date created, display color
 
 ---  
   
-`GET /api/courses/*[course id]*`  
+`GET /api/courses/[course id]`  
 Gets a course for a user with associated notes and essays.  
 Returns an object containing course, notes, and essays properties.  
-Course is same as described above, notes and essays is an array of objects
+Course is same as described above, notes and essays is an array of objects containing id, title, date created, user id, course id, and content.
+  
+---  
+  
+`DELETE /api/courses/[course id]`  
+Deletes a course.  
+Returns a 204 if succesful.
+  
+---  
+  
+`PATCH /api/courses/[course id]`  
+Updates the color associated with that course. *Requires a request body*  
+Key|Value
+---|---
+color|string, required  
+  
+Returns a 204 if succesful.
   
 ---  
   
