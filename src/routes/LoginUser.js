@@ -33,7 +33,7 @@ LoginUser
       if (!isPwGood) {
         return res.status(401).json({ message: 'Username or password is incorrect' })
       }
-      jwt.sign(sanitizeUser(user), JWT_SECRET, { expiresIn: '1d' }, (err, token) => {
+      jwt.sign(sanitizeUser(user), JWT_SECRET, { expiresIn: '5d' }, (err, token) => {
         if (err) {
           throw new Error(err)
         }
