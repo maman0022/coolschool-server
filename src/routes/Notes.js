@@ -38,7 +38,7 @@ Notes
     }
     DatabaseService.addNote(req.app.get('db'), noteData)
       .then(note => {
-        res.status(200).json(sanitizeNote(note))
+        res.status(201).json(sanitizeNote(note))
       })
       .catch(next)
   })

@@ -38,7 +38,7 @@ Essays
     }
     DatabaseService.addEssay(req.app.get('db'), essayData)
       .then(essay => {
-        res.status(200).json(sanitizeEssay(essay))
+        res.status(201).json(sanitizeEssay(essay))
       })
       .catch(next)
   })
