@@ -34,4 +34,46 @@ describe('Login Endpoint', () => {
       })
   })
 
+  it('No email sent - POST /api/login', () => {
+    const postData = {
+      password: 'password'
+    }
+    return supertest(app)
+      .post('/api/login')
+      .send(postData)
+      .expect(400, { message: `Email is required` })
+  })
+
+  it('No password sent - POST /api/login', () => {
+    const postData = {
+      email: 'jd@123.com'
+    }
+    return supertest(app)
+      .post('/api/login')
+      .send(postData)
+      .expect(400, { message: `Password is required` })
+  })
+
+  it('Wrong password sent - POST /api/login', () => {
+    const postData = {
+      email: 'jd@123.com',
+      password: 'wrong'
+    }
+    return supertest(app)
+      .post('/api/login')
+      .send(postData)
+      .expect(401, { message: 'Username or password is incorrect' })
+  })
+
+  it('Wrong email sent - POST /api/login', () => {
+    const postData = {
+      email: 'wrong@123.com',
+      password: 'password'
+    }
+    return supertest(app)
+      .post('/api/login')
+      .send(postData)
+      .expect(401, { message: 'Username or password is incorrect' })
+  })
+
 })

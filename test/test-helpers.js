@@ -36,7 +36,7 @@ module.exports = {
     const user = await db('users').where({ email: this.userData.email }).first()
     return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1hr' })
   },
-  createInvalidToken(){
+  createInvalidToken() {
     return jwt.sign(this.userData, process.env.JWT_SECRET, { expiresIn: '1hr' })
   },
   async populateCoursesTable(db) {

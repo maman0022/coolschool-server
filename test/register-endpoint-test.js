@@ -26,6 +26,32 @@ describe('Register Endpoint', () => {
       .expect(201)
   })
 
+  it('No email sent - POST /api/register', () => {
+    const postData = { ...helper.registerData }
+    delete postData.email
+    return supertest(app)
+      .post('/api/register')
+      .send(postData)
+      .expect(400, { message: 'Email is required' })
+  })
+
+  it('Wrong length password - POST /api/register', () => {
+    const postData = { ...helper.registerData }
+    postData.password = 123
+    return supertest(app)
+      .post('/api/register')
+      .send(postData)
+      .expect(400, { message: 'Password must be between 6 and 72 characters' })
+  })
+
+  it('User already exists - POST /api/register', () => {
+    before(() => helper.createUserAndReturnToken)
+    return supertest(app)
+      .post('/api/register')
+      .send(helper.registerData)
+      .expect(400, { message: 'User already exists' })
+  })
+
   it('verify user created in database', () => {
     return db('users').where('email', helper.registerData.email).first()
       .then(res => {
