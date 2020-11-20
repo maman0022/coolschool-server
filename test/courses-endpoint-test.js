@@ -1,6 +1,7 @@
 const knex = require('knex')
 const app = require('../src/app')
 const helper = require('./test-helpers')
+const { expect } = require('chai')
 
 describe('Courses Endpoints', () => {
   let db
@@ -75,6 +76,14 @@ describe('Courses Endpoints', () => {
       })
   })
 
+  it('No title sent - POST /api/courses', () => {
+    return supertest(app)
+      .post('/api/courses')
+      .auth(token, { type: 'bearer' })
+      .send({})
+      .expect(400, { message: 'Title is required' })
+  })
+
   it('GET /api/courses/1', () => {
     return supertest(app)
       .get('/api/courses/1')
@@ -95,6 +104,13 @@ describe('Courses Endpoints', () => {
       })
   })
 
+  it('Course Id not a number - GET /api/courses/1', () => {
+    return supertest(app)
+      .get('/api/courses/t')
+      .auth(token, { type: 'bearer' })
+      .expect(400, { message: 'Course ID is required and must be a number' })
+  })
+
   it('PATCH /api/courses/1', () => {
     return supertest(app)
       .patch('/api/courses/1')
@@ -103,11 +119,38 @@ describe('Courses Endpoints', () => {
       .expect(204)
   })
 
+  it('No color sent - PATCH /api/courses/1', () => {
+    return supertest(app)
+      .patch('/api/courses/1')
+      .auth(token, { type: 'bearer' })
+      .send({})
+      .expect(400, { message: 'Color is required' })
+  })
 
   it('DELETE /api/courses/1', () => {
     return supertest(app)
       .delete('/api/courses/1')
       .auth(token, { type: 'bearer' })
       .expect(204)
+  })
+
+  it('No Auth Token provided - GET /api/courses', () => {
+    return supertest(app)
+      .get('/api/courses')
+      .expect(401, { message: 'Missing or malformed authorization header' })
+  })
+
+  it('Wrong Auth Token provided - GET /api/courses', () => {
+    return supertest(app)
+      .get('/api/courses')
+      .auth('123', { type: 'bearer' })
+      .expect(401, { message: 'Invalid credentials' })
+  })
+
+  it('Auth Token with no user id provided - GET /api/courses', () => {
+    return supertest(app)
+      .get('/api/courses')
+      .auth(helper.createInvalidToken(), { type: 'bearer' })
+      .expect(401, { message: 'Unable to determine user. Please logout and log back in.' })
   })
 })

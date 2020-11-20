@@ -64,6 +64,18 @@ describe('Essays Endpoints', () => {
       })
   })
 
+  it('No title sent - POST /api/essays', () => {
+    const postData = {
+      content: 'either pass or fail',
+      courseId: 1
+    }
+    return supertest(app)
+      .post('/api/essays')
+      .auth(token, { type: 'bearer' })
+      .send(postData)
+      .expect(400, { message: `Title is required` })
+  })
+
   it('GET /api/essays/1', () => {
     return supertest(app)
       .get('/api/essays/1?course=1')
@@ -79,6 +91,27 @@ describe('Essays Endpoints', () => {
           content: helper.essayData.content
         })
       })
+  })
+
+  it('No such essay exists - GET /api/essays/1', () => {
+    return supertest(app)
+      .get('/api/essays/205445?course=1')
+      .auth(token, { type: 'bearer' })
+      .expect(204)
+  })
+
+  it('No course id sent in query - GET /api/essays/1', () => {
+    return supertest(app)
+      .get('/api/essays/1')
+      .auth(token, { type: 'bearer' })
+      .expect(400, { message: 'Course ID is required' })
+  })
+
+  it('Essay Id not a number - GET /api/essays/1', () => {
+    return supertest(app)
+      .get('/api/essays/t')
+      .auth(token, { type: 'bearer' })
+      .expect(400, { message: 'Essay ID is required and must be a number' })
   })
 
   it('PATCH /api/essays/1', () => {
@@ -103,10 +136,41 @@ describe('Essays Endpoints', () => {
       })
   })
 
+  it('No title sent - PATCH /api/essays/1', () => {
+    const postData = {
+      content: 'either pass or fail'
+    }
+    return supertest(app)
+      .patch('/api/essays/1')
+      .auth(token, { type: 'bearer' })
+      .send(postData)
+      .expect(400, { message: `Title is required` })
+  })
+
   it('DELETE /api/essays/1', () => {
     return supertest(app)
       .delete('/api/essays/1')
       .auth(token, { type: 'bearer' })
       .expect(204)
+  })
+
+  it('No Auth Token provided GET /api/essays', () => {
+    return supertest(app)
+      .get('/api/essays')
+      .expect(401, { message: 'Missing or malformed authorization header' })
+  })
+
+  it('Wrong Auth Token provided GET /api/essays', () => {
+    return supertest(app)
+      .get('/api/essays')
+      .auth('123', { type: 'bearer' })
+      .expect(401, { message: 'Invalid credentials' })
+  })
+
+  it('Auth Token with no user id provided - GET /api/essays', () => {
+    return supertest(app)
+      .get('/api/essays')
+      .auth(helper.createInvalidToken(), { type: 'bearer' })
+      .expect(401, { message: 'Unable to determine user. Please logout and log back in.' })
   })
 })

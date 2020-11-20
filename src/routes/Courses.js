@@ -60,8 +60,8 @@ Courses
     if (!req.user.id) {
       return res.status(401).json({ message: 'Unable to determine user. Please logout and log back in.' })
     }
-    if (!req.params.id) {
-      return res.status(400).json({ message: 'Course ID is required' })
+    if (!Number(req.params.id)) {
+      return res.status(400).json({ message: 'Course ID is required and must be a number' })
     }
     next()
   })

@@ -15,7 +15,7 @@ const AuthService = {
   authenticateUser(req, res, next) {
     const token = req.get('authorization') || ''
     if (!token.toLowerCase().startsWith('bearer') || !token.split(' ')[1]) {
-      res.status(401).json({ message: 'Missing or malformed authorization header' })
+      return res.status(401).json({ message: 'Missing or malformed authorization header' })
     }
     AuthService.verifyToken(token.split(' ')[1])
       .then(user => { req.user = user; next() })

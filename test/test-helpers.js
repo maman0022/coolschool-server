@@ -25,18 +25,19 @@ module.exports = {
     email: 'bd@123.com',
     password: 'password'
   },
+  userData: {
+    first_name: 'John',
+    last_name: 'Doe',
+    email: 'jd@123.com'
+  },
   async createUserAndReturnToken(db) {
     const pw = await bcrypt.hash('password', 10)
-    const userData = {
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'jd@123.com',
-      pw
-    }
-    await db('users').insert(userData)
-    const user = await db('users').where({ email: userData.email }).first()
-    const token = await jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1hr' })
-    return token
+    await db('users').insert({ ...this.userData, pw })
+    const user = await db('users').where({ email: this.userData.email }).first()
+    return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1hr' })
+  },
+  createInvalidToken(){
+    return jwt.sign(this.userData, process.env.JWT_SECRET, { expiresIn: '1hr' })
   },
   async populateCoursesTable(db) {
     await db('courses').insert(this.courseData)

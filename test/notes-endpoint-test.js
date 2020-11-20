@@ -64,6 +64,18 @@ describe('Notes Endpoints', () => {
       })
   })
 
+  it('No title sent - POST /api/notes', () => {
+    const postData = {
+      content: 'either pass or fail',
+      courseId: 1
+    }
+    return supertest(app)
+      .post('/api/notes')
+      .auth(token, { type: 'bearer' })
+      .send(postData)
+      .expect(400, { message: `Title is required` })
+  })
+
   it('GET /api/notes/1', () => {
     return supertest(app)
       .get('/api/notes/1?course=1')
@@ -79,6 +91,27 @@ describe('Notes Endpoints', () => {
           content: helper.noteData.content
         })
       })
+  })
+
+  it('No such note exists - GET /api/notes/1', () => {
+    return supertest(app)
+      .get('/api/notes/205445?course=1')
+      .auth(token, { type: 'bearer' })
+      .expect(204)
+  })
+
+  it('No course id sent in query - GET /api/notes/1', () => {
+    return supertest(app)
+      .get('/api/notes/1')
+      .auth(token, { type: 'bearer' })
+      .expect(400, { message: 'Course ID is required' })
+  })
+
+  it('Note Id not a number - GET /api/notes/1', () => {
+    return supertest(app)
+      .get('/api/notes/t')
+      .auth(token, { type: 'bearer' })
+      .expect(400, { message: 'Note ID is required and must be a number' })
   })
 
   it('PATCH /api/notes/1', () => {
@@ -103,10 +136,41 @@ describe('Notes Endpoints', () => {
       })
   })
 
+  it('No title sent - PATCH /api/notes/1', () => {
+    const postData = {
+      content: 'either pass or fail'
+    }
+    return supertest(app)
+      .patch('/api/notes/1')
+      .auth(token, { type: 'bearer' })
+      .send(postData)
+      .expect(400, { message: `Title is required` })
+  })
+
   it('DELETE /api/notes/1', () => {
     return supertest(app)
       .delete('/api/notes/1')
       .auth(token, { type: 'bearer' })
       .expect(204)
+  })
+
+  it('No Auth Token provided GET /api/notes', () => {
+    return supertest(app)
+      .get('/api/notes')
+      .expect(401, { message: 'Missing or malformed authorization header' })
+  })
+
+  it('Wrong Auth Token provided GET /api/notes', () => {
+    return supertest(app)
+      .get('/api/notes')
+      .auth('123', { type: 'bearer' })
+      .expect(401, { message: 'Invalid credentials' })
+  })
+
+  it('Auth Token with no user id provided - GET /api/notes', () => {
+    return supertest(app)
+      .get('/api/notes')
+      .auth(helper.createInvalidToken(), { type: 'bearer' })
+      .expect(401, { message: 'Unable to determine user. Please logout and log back in.' })
   })
 })
