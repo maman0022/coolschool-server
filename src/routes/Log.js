@@ -6,12 +6,15 @@ const Log = express.Router()
 Log
   .route('/')
   .post((req, res, next) => {
-    const { data } = req.body
+    const { data, site } = req.body
     if (!data) {
       return res.status(400).json({ message: 'Data is required' })
     }
+    if (!site) {
+      return res.status(400).json({ message: 'Site is required' })
+    }
     const dbData = {
-      'path': `/vistors/coolschool/${Date()}.txt`,
+      'path': `/vistors/${site}/${Date()}.txt`,
       'mode': 'add',
       'autorename': true,
       'mute': false,
