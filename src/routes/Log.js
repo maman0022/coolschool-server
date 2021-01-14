@@ -5,13 +5,20 @@ const Log = express.Router()
 
 Log
   .route('/')
-  .post((req, res, next) => {
-    const { data, site } = req.body
-    if (!data) {
-      return res.status(400).json({ message: 'Data is required' })
-    }
+  .post(async (req, res, next) => {
+    const { site } = req.body
     if (!site) {
       return res.status(400).json({ message: 'Site is required' })
+    }
+    let data
+    try {
+      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      if (ip.startsWith('::ffff:')) {
+        ip = ip.substr(7)
+      }
+      data = JSON.stringify((await axios.get(`https://ipapi.co/${ip}/json`)).data)
+    } catch (error) {
+      next(error)
     }
     const dbData = {
       'path': `/vistors/${site}/${Date()}.txt`,
