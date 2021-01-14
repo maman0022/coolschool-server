@@ -1,8 +1,18 @@
 const express = require('express')
 const bcrypt = require('bcryptjs')
+const xss = require('xss')
+const jwt = require('jsonwebtoken')
+const { JWT_SECRET } = require('../config')
 const DatabaseService = require('../services/DatabaseService')
 
 const RegisterUser = express.Router()
+
+function sanitizeUser(user) {
+  return {
+    id: user.id,
+    first_name: xss(user.first_name)
+  }
+}
 
 RegisterUser
   .route('/')
@@ -31,7 +41,13 @@ RegisterUser
         pw
       }
       await DatabaseService.addUser(req.app.get('db'), userData)
-      res.status(201).end()
+      const registeredUser = await DatabaseService.getUser(req.app.get('db'), email)
+      jwt.sign(sanitizeUser(registeredUser), JWT_SECRET, { expiresIn: '5d' }, (err, token) => {
+        if (err) {
+          throw new Error(err)
+        }
+        res.status(201).json({ token })
+      })
     } catch (error) {
       next(error)
     }
