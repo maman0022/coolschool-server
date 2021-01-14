@@ -27,5 +27,5 @@ Log
       .then(() => res.status(200).end())
       .catch(next)
   })
-0
+
 module.exports = Log
