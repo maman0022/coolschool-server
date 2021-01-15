@@ -10,9 +10,9 @@ Log
     if (!site) {
       return res.status(400).json({ message: 'Site is required' })
     }
-    let data
+    let data, ip
     try {
-      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
       if (ip.startsWith('::ffff:')) {
         ip = ip.substr(7)
       }
